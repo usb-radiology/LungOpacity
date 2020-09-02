@@ -1,5 +1,7 @@
 # LungOpacity
 
+[![DOI](https://zenodo.org/badge/292289868.svg)](https://zenodo.org/badge/latestdoi/292289868)
+
 Following subprojects are included (in the subfolders)
  * lung_mask - lung segmentation using NiftyNet
  * lung_report - lung HU quantification report
