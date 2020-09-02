@@ -1,0 +1,20 @@
+{
+    "description": "Lung segmentation and opacity calculation with report ",
+    "license": "GPL-3.0",
+    "title": "LungOpacity v0.2.0",
+    "version": "v0.2.0",
+    "upload_type": "software",
+    "publication_date": "2020-09-02",
+    "creators": [
+        {
+            "name": "Shan Yang",
+            "affiliation": "Universit\u00e4tsspital Basel"
+        },
+        {
+            "affiliation": "Universit\u00e4tsspital Basel",
+            "name": "Joshy Cyriac"
+        }       
+      
+    ],
+    "access_right": "open"
+}
