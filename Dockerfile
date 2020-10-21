@@ -42,3 +42,9 @@ RUN mkdir /apps/niftynet_model && mkdir /apps/niftynet_model/models &&  cd /apps
     wget https://github.com/usb-radiology/LungOpacity/releases/download/v0.1.0/checkpoint
 
 
+
+RUN wget -O- http://neuro.debian.net/lists/xenial.de-md.libre | tee /etc/apt/sources.list.d/neurodebian.sources.list && \
+    apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9 && \
+    apt-get update && \
+    apt-get install -y dcm2niix dcmtk pigz
+    

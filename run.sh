@@ -1,10 +1,9 @@
 #!/bin/bash
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-MODEL_DIR=$DIR/thoraxctd/lung_mask/niftynet_model
 
-INPUT_PATH=$DIR/data/thoraxct.nii
-OUTPUT_PATH=$DIR/data/mask.nii.gz
+INPUT_PATH=$DIR/dicom
+OUTPUT_PATH=$DIR/output
 
 
 while [[ $# -gt 0 ]]
@@ -30,18 +29,7 @@ do
 esac
 done
 
-data_dir=$(dirname $INPUT_PATH)
-data_name=$(basename $INPUT_PATH)
-
-out_dir=$(dirname $OUTPUT_PATH)
-out_name=$(basename $OUTPUT_PATH)
-
 docker run --gpus all \
     -v $DIR/:/apps/LungOpacity \
-    -v $data_dir/:/data -v $out_dir/:/data_out \
-    -ti lung_opacity bash -c "source /venv_niftynet/bin/activate; python3.5 /apps/LungOpacity/lung_mask/lungmask.py -i /data/$data_name -o /data_out/$out_name -model_dir /apps/niftynet_model -conf /apps/LungOpacity/lung_mask/conf_3d.ini"
-
-docker run --gpus all \
-    -v $DIR/:/apps/LungOpacity \
-    -v $data_dir/:/data -v $out_dir/:/data_out \
-    -ti lung_opacity bash -c ". /venv_report/bin/activate;python3.6 /apps/LungOpacity/lung_report/main.py -i /data/$data_name -m /data_out/$out_name -o /data_out/"
+    -v $INPUT_PATH/:/data -v $OUTPUT_PATH/:/data_out \
+    -ti lungopacity_frontier bash -c "bash /apps/LungOpacity/run_LungOpacity.sh -i /data -o /data_out"

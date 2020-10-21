@@ -114,10 +114,10 @@ def main():
     end = timer()
     print(f"HTML template creation took: {(end-start):.3f} sec")
 
-    options = {"xvfb": "", "format": "png", "width": "2400", "height": "1200"}
+    options = {"xvfb": "", "format": "jpg", "width": "2400", "height": "1200"}
 
     print("Start generating screenshot ...")
-    report_file = output_dir / "report.png"
+    report_file = output_dir / "report.jpg"
     imgkit.from_string(output_html, str(report_file), options=options)
     print(f"Screenshot saved to {report_file}")
     # delete images for report, nobody cares
