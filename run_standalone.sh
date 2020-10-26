@@ -2,9 +2,6 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-INPUT_PATH=$DIR/dicom
-OUTPUT_PATH=$DIR/output
-
 
 while [[ $# -gt 0 ]]
 do
@@ -29,7 +26,8 @@ do
 esac
 done
 
+mkdir -p $OUTPUT_PATH
 docker run --gpus all \
-    -v $DIR/:/apps/LungOpacity \
-    -v $INPUT_PATH/:/data -v $OUTPUT_PATH/:/data_out \
-    -ti lungopacity_frontier bash -c "bash /apps/LungOpacity/run_LungOpacity.sh -i /data -o /data_out"
+    -v $INPUT_PATH/:/docker/shs/in -v $OUTPUT_PATH/:/docker/shs/out \
+    -ti lungopacity_frontier
+

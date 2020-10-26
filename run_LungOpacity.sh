@@ -1,60 +1,21 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-MODEL_DIR=$DIR/thoraxctd/lung_mask/niftynet_model
+dcmfile=$(ls -t /docker/shs/in/*.dcm | head -n 1)
 
-while [[ $# -gt 0 ]]
-do
-  key="$1"
+dcm2niix -m y -o /docker/shs/tmp /docker/shs/in/
 
-  case $key in
-
-    -i)
-    INPUT_PATH="$2"
-    shift # past argument
-    shift # past value
-    ;;
-    -o)
-    OUTPUT_PATH="$2"
-    shift # past argument
-    shift # past value
-    ;;
-     *)    # unknown option
-    POSITIONAL+=("$1") # save it in an array for later
-    shift # past argument
-    ;;
-esac
-done
+file=$(ls -t /docker/shs/tmp/*.nii | head -n 1)
 
 
-if [ ! -d $OUTPUT_PATH ]
-then
-    mkdir $OUTPUT_PATH
-fi
+source /venv_niftynet/bin/activate
+python3.5 /apps/LungOpacity/lung_mask/lungmask.py -i $file -o /docker/shs/tmp/mask.nii.gz -model_dir /apps/niftynet_model -conf /apps/LungOpacity/lung_mask/conf_3d.ini
+deactivate 
 
-if [ ! -d $OUTPUT_PATH/nii ]
-then
-    mkdir $OUTPUT_PATH/nii
-fi
+source /venv_report/bin/activate
+python3.6 /apps/LungOpacity/lung_report/main.py -i $file -m  /docker/shs/tmp/mask.nii.gz -o  /docker/shs/tmp/
 
-dcmfile=$(ls -t $INPUT_PATH/*.dcm | head -n 1)
+img2dcm -stf $dcmfile  /docker/shs/tmp/report.jpg /docker/shs/out/lungopacity_report.dcm
 
-dcm2niix -m y -o $OUTPUT_PATH/nii $INPUT_PATH
+chmod 777 /docker/shs/out/lungopacity_report.dcm
 
-for file in $OUTPUT_PATH/nii/*.nii; do
-    source /venv_niftynet/bin/activate
-
-    python3.5 /apps/LungOpacity/lung_mask/lungmask.py -i $file -o $OUTPUT_PATH/nii/mask.nii.gz -model_dir /apps/niftynet_model -conf /apps/LungOpacity/lung_mask/conf_3d.ini
-
-    deactivate 
-
-    source /venv_report/bin/activate;python3.6 /apps/LungOpacity/lung_report/main.py -i $file -m $OUTPUT_PATH/nii/mask.nii.gz -o $OUTPUT_PATH/nii
-    
-    img2dcm -stf $dcmfile $OUTPUT_PATH/nii/report.jpg $OUTPUT_PATH/lungopacity_report.dcm
-
-
-    break 1
-
-
-
-done 
+exit

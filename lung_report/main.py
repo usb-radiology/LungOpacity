@@ -24,6 +24,7 @@ print(template_dir)
 env = Env()
 env.read_env()  # read .env file, if it exists
 templates_path = env("TEMPLATES_PATH", template_dir)
+# templates_path = "/apps/LungOpacity/lung_report/"
 
 env = Environment(
     loader=FileSystemLoader(templates_path),

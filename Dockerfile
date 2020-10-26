@@ -48,3 +48,13 @@ RUN wget -O- http://neuro.debian.net/lists/xenial.de-md.libre | tee /etc/apt/sou
     apt-get update && \
     apt-get install -y dcm2niix dcmtk pigz
     
+
+RUN mkdir -p /docker/shs/in && \ 
+    mkdir -p /docker/shs/out && \ 
+    mkdir -p /docker/shs/tmp
+WORKDIR /docker/shs
+ADD lung_mask/ /apps/LungOpacity/lung_mask/
+ADD lung_report/ /apps/LungOpacity/lung_report/
+ADD run_LungOpacity.sh /docker/shs/
+RUN ["chmod", "+x", "/docker/shs/run_LungOpacity.sh"]
+ENTRYPOINT ["/bin/bash","/docker/shs/run_LungOpacity.sh"]
